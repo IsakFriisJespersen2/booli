@@ -1,0 +1,67 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Booli API</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+</head>
+
+<body>
+  <script src="js/scripts.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <div class="d-flex justify-content-center">
+    <div class="w-25 p-3">
+      <h1>Welcome</h1>
+      <p>Powered by</p>
+      <img src="https://bcdn.se/images/resources/booli_logo.png"/>
+      <input class="form-control" id="inputArea" placeholder="Gata, ort eller kommun"/>
+      <button type="button" id="submitButton" class="btn btn-dark">Submit</button>
+    </div>
+  </div>
+  <div class="w-75 p-3">
+    <canvas id="myCanvas"></canvas>
+  </div>
+  <script>
+    $("#submitButton").click(function(e) {
+      const el = document.getElementById("inputArea")
+      $.ajax({
+          type: "GET",
+          url: "http://localhost:5000/get-booli-data/sold/" + el.value,
+          crossDomain: true,
+          success: function(res) {
+              const soldDate = res["res"].map((item) => {
+                return new Date(item['soldDate'])
+              })
+              const soldPrice = res["res"].map((item) => {
+                return item['soldPrice']
+              })
+              const ctx = document.getElementById("myCanvas")
+              var myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                  labels: soldDate.reverse(),
+                  datasets: [{ 
+                    data: soldPrice.reverse(),
+                    label: "Last object sold in area (Objects are limited to 5000)",
+                    borderColor: "#3e95cd",
+                    fill: false
+                    }
+                  ]
+                }
+              });
+          },
+          error: function(err)  {
+            console.log(err);
+          }
+      });
+    });
+  </script>
+</body>
+</html>

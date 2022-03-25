@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+
+  booli:
+    image: lol
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - 5001:5001
+    command: >
+      sh -c "python -u app.py"

@@ -6,15 +6,14 @@ from flask import Flask, render_template, jsonify, make_response
 from typing import List
 from flask_cors import CORS
 from expiringdict import ExpiringDict
+import os
 cache = ExpiringDict(max_len=100, max_age_seconds=60*60*24)
 
 app = Flask(__name__)
-CORS(app)
-app.run(debug=True)
+print('HHeeeej')
 
 with open('config.json') as config_file:
     config = json.load(config_file)
-
 booli_api = BooliApi(
     user_agent='Isak Friis-Jespersen',
     base_url='https://api.booli.se',
@@ -22,10 +21,10 @@ booli_api = BooliApi(
     private_key=config.get('privateKey')
 )
 
-
 @app.route('/get-booli-data/<resource>/<q>', methods=['GET'])
 @cross_origin()
 def get_booli_data(resource, q):
+    print("hej")
     if cache.get(f'/get-booli-data/{resource}/{q}'):
         return cache.get(f'/{resource}/{q}')
     max_objects_to_fetch = 5000
@@ -63,3 +62,8 @@ def get_booli_data(resource, q):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+if __name__ == "__main__":
+    port = int(os.environ.get('PORT', 5001))
+    app.run(debug=True, host='0.0.0.0', port=port)
+    CORS(app)

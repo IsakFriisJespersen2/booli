@@ -33,7 +33,7 @@
       const el = document.getElementById("inputArea")
       $.ajax({
           type: "GET",
-          url: "http://localhost:5000/get-booli-data/sold/" + el.value,
+          url: "http://localhost:5001/get-booli-data/sold/" + el.value,
           crossDomain: true,
           success: function(res) {
               const soldDate = res["res"].map((item) => {
